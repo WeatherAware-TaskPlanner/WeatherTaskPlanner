@@ -1,6 +1,5 @@
 package taskmanager.api;
 
-
 import java.time.LocalDateTime;
 
 public class MainApp {
@@ -8,7 +7,7 @@ public class MainApp {
     public static void main(String[] args) {
         // Build the TaskManager (students will implement DefaultTaskManager)
         TaskManager tm = TaskManager.builder()
-                .withWeatherApiKey("YOUR_API_KEY_HERE")
+                .withWeatherApiKey("3ff3cbdc1e244a653f8c9e0264375a0f")
                 .build();
 
         // Add a couple of test tasks
@@ -16,14 +15,12 @@ public class MainApp {
                 "task-001",
                 "Morning run",
                 LocalDateTime.now().plusHours(2),
-                true
-        );
+                true);
         Task task2 = new Task(
                 "task-002",
                 "Coding session",
                 LocalDateTime.now().plusHours(4),
-                false
-        );
+                false);
 
         tm.addTask(task1);
         tm.addTask(task2);
@@ -37,7 +34,7 @@ public class MainApp {
         System.out.println("Tasks ----------> " + tm.getTasks());
 
         for (Task t : tm.getTasks()) {
-            System.out.println("id: " + t.getId() + ", title: " + t.getTitle()+ "Description :" +t.getDescription());
+            System.out.println("id: " + t.getId() + ", title: " + t.getTitle() + "Description :" + t.getDescription());
         }
     }
 }
