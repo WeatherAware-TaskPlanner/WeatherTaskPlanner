@@ -9,3 +9,6 @@ task-002,Coding session,null,2026-04-30T06:30:39.501412600,false
 task-001,Morning run,null,2026-04-30T04:34:32.691135,true
 task-001,Morning run,null,2026-04-30T04:34:32.691135,true
 task-002,Coding session,null,2026-04-30T06:34:32.691135,false
+task-001,Morning run,null,2026-05-01T06:10:45.747226600,true
+task-001,Morning run,null,2026-05-01T06:10:45.747226600,true
+task-002,Coding session,null,2026-05-01T08:10:45.747226600,false

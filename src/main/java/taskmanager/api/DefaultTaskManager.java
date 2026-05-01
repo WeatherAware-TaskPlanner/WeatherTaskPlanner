@@ -2,6 +2,7 @@ package taskmanager.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Flow.Subscriber;
 
 import javax.swing.filechooser.FileFilter;
 
@@ -13,8 +14,11 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.io.IOException;
 import java.io.PipedWriter;
+import java.time.format.DateTimeFormatter;
 
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import org.springframework.web.reactive.function.client.WebClient;
 
 public class DefaultTaskManager implements TaskManager {
@@ -42,30 +46,31 @@ public class DefaultTaskManager implements TaskManager {
         }
     }
 
-    public List<Task> returnDataFromFile() {
-        try {
-            FileReader f = new FileReader("Tasks.txt");
-            BufferedReader r = new BufferedReader(f);
-            String task;
-            MyTasks.clear();
-            while ((task = r.readLine()) != null) {
-                String[] newList = task.split(",");
-                String id = newList[0];
-                String title = newList[1];
-                String Description = newList[2];
-                String dateString = newList[3].trim();
-                LocalDateTime DueDate = LocalDateTime.parse(dateString);
-                boolean WeatherSensitive = Boolean.parseBoolean(newList[4]);
-                Task newTask = new Task(id, title, DueDate, WeatherSensitive);
-                newTask.setDescription(Description);
-                MyTasks.add(newTask);
+    public Mono<List<Task>> returnDataFromFile() {
+        return Mono.fromCallable(() -> {
+            try {
+                FileReader f = new FileReader("Tasks.txt");
+                BufferedReader r = new BufferedReader(f);
+                String task;
+                MyTasks.clear();
+                while ((task = r.readLine()) != null) {
+                    String[] newList = task.split(",");
+                    String id = newList[0];
+                    String title = newList[1];
+                    String Description = newList[2];
+                    String dateString = newList[3].trim();
+                    LocalDateTime DueDate = LocalDateTime.parse(dateString);
+                    boolean WeatherSensitive = Boolean.parseBoolean(newList[4]);
+                    Task newTask = new Task(id, title, DueDate, WeatherSensitive);
+                    newTask.setDescription(Description);
+                    MyTasks.add(newTask);
+                }
+                r.close();
+            } catch (IOException e) {
+                System.out.println("Error: " + e.getMessage());
             }
-            r.close();
-        } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-        return MyTasks;
-
+            return MyTasks;
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
@@ -87,25 +92,33 @@ public class DefaultTaskManager implements TaskManager {
 
     private final WebClient webClient = WebClient.create();
 
-    private record WeatherResponse(Main main, List<Weather> weather) {
-        public record Main(double temp) {
-        }
+    private record WeatherResponse(List<forecastInfo> list) {
+    }
 
-        public record Weather(String description) {
-        }
+    private record forecastInfo(Main main, List<Weather> weather, String dt_txt, double pop) {
+    }
+
+    private record Main(double temp) {
+    }
+
+    private record Weather(String description) {
     }
 
     @Override
     public Mono<WeatherForecast> fetchWeather(String location) {
-        String URL = "https://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + Key
+        String URL = "https://api.openweathermap.org/data/2.5/forecast?q=" + location + "&appid=" + Key
                 + "&units=metric";
 
         return webClient
                 .get().uri(URL).retrieve().bodyToMono(WeatherResponse.class)
                 .map(response -> {
-                    double temp = response.main().temp();
-                    String condition = response.weather().get(0).description();
-                    return new WeatherForecast(location, java.time.LocalDateTime.now(), temp, condition, 0.0);
+                    forecastInfo info = response.list().get(0);
+                    double temp = info.main().temp();
+                    String condition = info.weather().get(0).description();
+                    String time = info.dt_txt();
+                    DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    LocalDateTime fTime = LocalDateTime.parse(time, format);
+                    return new WeatherForecast(location, fTime, temp, condition, info.pop());
                 });
     }
 
