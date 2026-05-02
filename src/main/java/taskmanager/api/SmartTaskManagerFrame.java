@@ -1,4 +1,4 @@
- 
+
 // package taskmanager.api;
 
 // import taskmanager.api.TaskManager;
@@ -20,7 +20,7 @@
 // public class SmartTaskManagerFrame extends JFrame {
 
 //     private final TaskManager taskManager;
-//     private final TaskService taskService;  // to be initialized from taskManager.impl
+//     private final TaskService taskService; // to be initialized from taskManager.impl
 //     private final SchedulePlanner schedulePlanner;
 
 //     private final JTable taskTable;
@@ -28,12 +28,15 @@
 //     private final JButton updateWeatherButton;
 //     private final JLabel statusLabel;
 
-//     private final String[] columnNames = {"ID", "Title", "Due Time", "Weather Sensitive", "Status"};
+//     private final String[] columnNames = { "ID", "Title", "Due Time", "Weather Sensitive", "Status" };
 
 //     public SmartTaskManagerFrame(TaskManager taskManager) {
 //         this.taskManager = taskManager;
-//         this.taskService = /* students will initialize from taskManager impl */;
 //         this.schedulePlanner = taskManager.getPlanner();
+//         this.taskService = new DefaultTaskService(taskManager.getTasks())
+        
+//         // (TaskService) taskManager
+//         /* students will initialize from taskManager impl */;
 
 //         setTitle("Smart Task Manager (Swing)");
 //         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -65,14 +68,16 @@
 //         // “Update Weather” clicked
 //         updateWeatherButton.addActionListener(e -> {
 //             int selectedRow = taskTable.getSelectedRow();
-//             if (selectedRow < 0) return;
+//             if (selectedRow < 0)
+//                 return;
 
 //             String taskId = (String) tableModel.getValueAt(selectedRow, 0);
 //             updateWeatherForTask(taskId);
 //         });
 //     }
 
-//     // ... Keep your existing loadTasks, populateTable, and updateWeatherForTask methods ...
+//     // ... Keep your existing loadTasks, populateTable, and updateWeatherForTask
+//     // methods ...
 //     private void loadTasks() {
 //         Mono.just(taskManager.getTasks())
 //                 .subscribeOn(Schedulers.boundedElastic())
@@ -80,36 +85,47 @@
 //                 .subscribe();
 //     }
 
-
-//         private void populateTable(List<Task> tasks) {
+//     private void populateTable(List<Task> tasks) {
 //         tableModel.setRowCount(0);
 //         for (Task t : tasks) {
-//             tableModel.addRow(new Object[]{t.getId(), t.getTitle(), t.getDueDateTime(), t.isWeatherSensitive(), "N/A"});
+//             tableModel.addRow(
+//                     new Object[] { t.getId(), t.getTitle(), t.getDueDateTime(), t.isWeatherSensitive(), "N/A" });
 //         }
 //     }
 
 //     private void updateWeatherForTask(String taskId) {
-//         Mono<WeatherForecast> forecastMono = taskManager.fetchWeather("Jeddah");  // fixed city
+//         Mono<WeatherForecast> forecastMono = taskManager.fetchWeather("Jeddah"); // fixed city
 
 //         forecastMono
 //                 .subscribeOn(Schedulers.boundedElastic())
 //                 .doOnNext(forecast -> SwingUtilities.invokeLater(() -> {
 //                     // Simple weather‑aware status logic
-//                     String status = forecast.getPrecipitationProbability() > 0.6
-//                             ? "RISKY (rain)"
-//                             : "SAFE";
+
+//                     List<ScheduleRecommendation> recommendations = schedulePlanner
+//                             .suggestSchedule(taskManager.getTasks(), forecast).block();
+
+//                     String status = "No Recommendation";
+//                     for (ScheduleRecommendation r : recommendations) {
+//                         if (r.task().getId().equals(taskId)) {
+//                             status = r.recommendation();
+//                             break;
+//                         }
+                    
+
+//                     // Default status
+//                     // String status = forecast.getPrecipitationProbability() > 0.6
+//                     // ? "RISKY (rain)"
+//                     // : "SAFE";
 
 //                     updateTaskStatusInTable(taskId, status);
 //                     statusLabel.setText("Weather updated for task: " + taskId);
+//                     }
 //                 }))
 //                 .doOnError(error -> SwingUtilities.invokeLater(() -> {
 //                     statusLabel.setText("Weather fetch failed: " + error.getMessage());
 //                 }))
 //                 .subscribe();
 //     }
-
-
-
 
 //     private void updateTaskStatusInTable(String taskId, String status) {
 //         int rowCount = tableModel.getRowCount();
@@ -121,6 +137,5 @@
 //             }
 //         }
 //     }
-    
-// }
 
+// }

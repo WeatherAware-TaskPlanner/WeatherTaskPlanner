@@ -1,8 +1,8 @@
-// package taskmanager.api;
+package taskmanager.api;
 
 
-// /**
-//  * A single suggested schedule entry for one task.
-//  */
-// public record ScheduleRecommendation(Task task, String recommendation) {
-// }
+/**
+ * A single suggested schedule entry for one task.
+ */
+public record ScheduleRecommendation(Task task, String recommendation) {
+}
