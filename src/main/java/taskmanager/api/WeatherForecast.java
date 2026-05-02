@@ -16,8 +16,8 @@ public class WeatherForecast {
         this.location = location;
     }
 
-    public void addF(LocalDateTime time, double temp, String condition) {
-        dList.add(new weatherRecord(time, temp, condition));
+    public void addF(LocalDateTime time, double temp, String condition, double pop) {
+        dList.add(new weatherRecord(time, temp, condition, pop));
     }
 
     public String getLocation() {
@@ -28,6 +28,13 @@ public class WeatherForecast {
         return dList;
     }
 
+
+    public double getPrecipitationProbability() {
+    return dList.stream()
+            .mapToDouble(w -> w.getPop())
+            .average()
+            .orElse(0.0);
+}
     
 
 

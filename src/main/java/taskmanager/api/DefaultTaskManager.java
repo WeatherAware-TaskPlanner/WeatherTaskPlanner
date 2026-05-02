@@ -27,83 +27,47 @@ public class DefaultTaskManager implements TaskManager {
     List<Task> MyTasks;
     String Key;
     private final SchedulePlanner planner;
+    
+
+    public TaskService taskService = new DefaultTaskService();
 
     public DefaultTaskManager(String Key, SchedulePlanner planner) {
         this.Key = Key;
         this.planner = planner;
         MyTasks = new ArrayList<>();
-        returnDataFromFile();
+        // returnDataFromFile();
     }
 
-    public Mono<Void> SyncFile() {
-        return Mono.fromRunnable(() ->{
-
-        try {
-            FileWriter f = new FileWriter("Tasks.txt", false);
-            PrintWriter p = new PrintWriter(f);
-            for (Task t : MyTasks) {
-                p.println(t.getId() + "," + t.getTitle() + "," + t.getDescription()
-                        + "," + t.getDueDateTime() + "," + t.isWeatherSensitive());
-            }
-            p.close();
-            System.out.println("Tasks added to file");
-        } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-
-        }).then().subscribeOn(Schedulers.boundedElastic());
-    }
-
-    public Mono<List<Task>> returnDataFromFile() {
-        return Mono.fromCallable(() -> {
-            try {
-                FileReader f = new FileReader("Tasks.txt");
-                BufferedReader r = new BufferedReader(f);
-                String task;
-                MyTasks.clear();
-                while ((task = r.readLine()) != null) {
-                    String[] newList = task.split(",");
-                    String id = newList[0];
-                    String title = newList[1];
-                    String Description = newList[2];
-                    String dateString = newList[3].trim();
-                    LocalDateTime DueDate = LocalDateTime.parse(dateString);
-                    boolean WeatherSensitive = Boolean.parseBoolean(newList[4]);
-                    Task newTask = new Task(id, title, DueDate, WeatherSensitive);
-                    newTask.setDescription(Description);
-                    MyTasks.add(newTask);
-                }
-                r.close();
-            } catch (IOException e) {
-                System.out.println("Error: " + e.getMessage());
-            }
-            return MyTasks;
-        }).subscribeOn(Schedulers.boundedElastic());
-    }
+   
 
     @Override
     public void addTask(Task task) {
-        MyTasks.add(task);
-        SyncFile().subscribe();
+
+        taskService.addTask(task).block();
+       
+        // MyTasks.add(task);
+        // SyncFile().subscribe(); 
 
     }
 
     @Override
     public List<Task> getTasks() {
-        return MyTasks;
+        return taskService.findAllTasksAsList().block();
     }
 
     @Override
     public void removeTask(String taskId) {
-       
-        for(Task t:MyTasks){
-            if(t.getId().equals(taskId)){
-                MyTasks.remove(t);
-                break;
-            }
-        }
 
-        SyncFile().subscribe();
+        taskService.removeTask(taskId).block();
+       
+        // for(Task t:MyTasks){
+        //     if(t.getId().equals(taskId)){
+        //         MyTasks.remove(t);
+        //         break;
+        //     }
+        // }
+
+        // SyncFile().subscribe();
     }
 
     private final WebClient webClient = WebClient.create();

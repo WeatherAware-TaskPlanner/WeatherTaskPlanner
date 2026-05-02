@@ -52,9 +52,9 @@ public class DefaultSchedulePlaner implements SchedulePlanner {
             return "it's very sunny";
         }else if(temp <15){
             return "it's very cold";
-        }else if(condition.contains("Thunderstorm")){
+        }else if(condition.contains("thunderstorm")){
             return "there is a thunderstorm";
-        }else if(condition.contains("Rain")){
+        }else if(condition.contains("rain")){
             return "there is a rain";
         }else  if(condition.contains("haze")){
              return "there is a haze";
@@ -66,7 +66,7 @@ public class DefaultSchedulePlaner implements SchedulePlanner {
     }
     
     
-
+    //S
     @Override
     public Mono<List<ScheduleRecommendation>> suggestScheduleForLocation(List<Task> tasks, String location) {
         // TODO Auto-generated method stub
