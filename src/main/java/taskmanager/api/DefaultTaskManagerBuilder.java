@@ -6,7 +6,7 @@ public class DefaultTaskManagerBuilder implements TaskManager.TaskManagerBuilder
 
     private String Key;
     private SchedulePlanner planner;
-
+    private String path;
     
     @Override
     public TaskManager.TaskManagerBuilder withWeatherApiKey(String Key) {
@@ -16,7 +16,7 @@ public class DefaultTaskManagerBuilder implements TaskManager.TaskManagerBuilder
 
     @Override
     public TaskManager.TaskManagerBuilder withStoragePath(String path) {
-
+        this.path = path;
         return this;
     }
 
@@ -28,8 +28,9 @@ public class DefaultTaskManagerBuilder implements TaskManager.TaskManagerBuilder
 
     @Override
     public TaskManager build() {
-        DefaultTaskManager Manager = new DefaultTaskManager(Key,planner);
-        return Manager;
+        return new DefaultTaskManager(Key, new DefaultSchedulePlaner());
+        // DefaultTaskManager Manager = new DefaultTaskManager(Key,planner);
+        // return Manager;
     }
 
 }

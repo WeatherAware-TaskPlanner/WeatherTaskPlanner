@@ -1,141 +1,130 @@
+ 
+package taskmanager.api;
 
-// package taskmanager.api;
+import taskmanager.api.TaskManager;
+import taskmanager.api.TaskNotFoundException;
+import taskmanager.api.Task;
+import taskmanager.api.WeatherForecast;
+import taskmanager.api.TaskService;
+import taskmanager.api.SchedulePlanner;
 
-// import taskmanager.api.TaskManager;
-// import taskmanager.api.TaskNotFoundException;
-// import taskmanager.api.Task;
-// import taskmanager.api.WeatherForecast;
-// import taskmanager.api.TaskService;
-// import taskmanager.api.SchedulePlanner;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
-// import reactor.core.publisher.Mono;
-// import reactor.core.scheduler.Schedulers;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
-// import javax.swing.*;
-// import javax.swing.table.DefaultTableModel;
-// import java.awt.*;
-// import java.time.LocalDateTime;
-// import java.util.List;
+public class SmartTaskManagerFrame extends JFrame {
 
-// public class SmartTaskManagerFrame extends JFrame {
+    private final TaskManager taskManager;
+    private final TaskService taskService;  // to be initialized from taskManager.impl
+    private final SchedulePlanner schedulePlanner;
 
-//     private final TaskManager taskManager;
-//     private final TaskService taskService; // to be initialized from taskManager.impl
-//     private final SchedulePlanner schedulePlanner;
+    private final JTable taskTable;
+    private final DefaultTableModel tableModel;
+    private final JButton updateWeatherButton;
+    private final JLabel statusLabel;
 
-//     private final JTable taskTable;
-//     private final DefaultTableModel tableModel;
-//     private final JButton updateWeatherButton;
-//     private final JLabel statusLabel;
+    private final String[] columnNames = {"ID", "Title", "Due Time", "Weather Sensitive", "Status"};
 
-//     private final String[] columnNames = { "ID", "Title", "Due Time", "Weather Sensitive", "Status" };
-
-//     public SmartTaskManagerFrame(TaskManager taskManager) {
-//         this.taskManager = taskManager;
-//         this.schedulePlanner = taskManager.getPlanner();
-//         this.taskService = new DefaultTaskService(taskManager.getTasks())
+    public SmartTaskManagerFrame(TaskManager taskManager) {
+        this.taskManager = taskManager;
+        this.schedulePlanner = taskManager.getPlanner();
+        //S
+        this.taskService =  /* students will initialize from taskManager impl */;
         
-//         // (TaskService) taskManager
-//         /* students will initialize from taskManager impl */;
 
-//         setTitle("Smart Task Manager (Swing)");
-//         setDefaultCloseOperation(EXIT_ON_CLOSE);
-//         setSize(700, 400);
+        setTitle("Smart Task Manager (Swing)");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(700, 400);
 
-//         tableModel = new DefaultTableModel(columnNames, 0);
-//         taskTable = new JTable(tableModel);
-//         JScrollPane scrollPane = new JScrollPane(taskTable);
+        tableModel = new DefaultTableModel(columnNames, 0);
+        taskTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(taskTable);
 
-//         updateWeatherButton = new JButton("Update Weather for Selected Task");
-//         updateWeatherButton.setEnabled(false);
+        updateWeatherButton = new JButton("Update Weather for Selected Task");
+        updateWeatherButton.setEnabled(false);
 
-//         statusLabel = new JLabel("Ready");
+        statusLabel = new JLabel("Ready");
 
-//         setLayout(new BorderLayout());
-//         add(scrollPane, BorderLayout.CENTER);
-//         add(updateWeatherButton, BorderLayout.SOUTH);
-//         add(statusLabel, BorderLayout.NORTH);
+        setLayout(new BorderLayout());
+        add(scrollPane, BorderLayout.CENTER);
+        add(updateWeatherButton, BorderLayout.SOUTH);
+        add(statusLabel, BorderLayout.NORTH);
 
-//         // Initialization: load tasks
-//         loadTasks();
+        // Initialization: load tasks
+        loadTasks();
 
-//         // Wiring: select row → enable weather button
-//         taskTable.getSelectionModel().addListSelectionListener(e -> {
-//             int selectedRow = taskTable.getSelectedRow();
-//             updateWeatherButton.setEnabled(selectedRow >= 0);
-//         });
+        // Wiring: select row → enable weather button
+        taskTable.getSelectionModel().addListSelectionListener(e -> {
+            int selectedRow = taskTable.getSelectedRow();
+            updateWeatherButton.setEnabled(selectedRow >= 0);
+        });
 
-//         // “Update Weather” clicked
-//         updateWeatherButton.addActionListener(e -> {
-//             int selectedRow = taskTable.getSelectedRow();
-//             if (selectedRow < 0)
-//                 return;
+        // “Update Weather” clicked
+        updateWeatherButton.addActionListener(e -> {
+            int selectedRow = taskTable.getSelectedRow();
+            if (selectedRow < 0) return;
 
-//             String taskId = (String) tableModel.getValueAt(selectedRow, 0);
-//             updateWeatherForTask(taskId);
-//         });
-//     }
+            String taskId = (String) tableModel.getValueAt(selectedRow, 0);
+            updateWeatherForTask(taskId);
+        });
+    }
 
-//     // ... Keep your existing loadTasks, populateTable, and updateWeatherForTask
-//     // methods ...
-//     private void loadTasks() {
-//         Mono.just(taskManager.getTasks())
-//                 .subscribeOn(Schedulers.boundedElastic())
-//                 .doOnNext(tasks -> SwingUtilities.invokeLater(() -> populateTable(tasks)))
-//                 .subscribe();
-//     }
+    // ... Keep your existing loadTasks, populateTable, and updateWeatherForTask methods ...
+    private void loadTasks() {
+        Mono.just(taskManager.getTasks())
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnNext(tasks -> SwingUtilities.invokeLater(() -> populateTable(tasks)))
+                .subscribe();
+    }
 
-//     private void populateTable(List<Task> tasks) {
-//         tableModel.setRowCount(0);
-//         for (Task t : tasks) {
-//             tableModel.addRow(
-//                     new Object[] { t.getId(), t.getTitle(), t.getDueDateTime(), t.isWeatherSensitive(), "N/A" });
-//         }
-//     }
 
-//     private void updateWeatherForTask(String taskId) {
-//         Mono<WeatherForecast> forecastMono = taskManager.fetchWeather("Jeddah"); // fixed city
+        private void populateTable(List<Task> tasks) {
+        tableModel.setRowCount(0);
+        for (Task t : tasks) {
+            tableModel.addRow(new Object[]{t.getId(), t.getTitle(), t.getDueDateTime(), t.isWeatherSensitive(), "N/A"});
+        }
+    }
 
-//         forecastMono
-//                 .subscribeOn(Schedulers.boundedElastic())
-//                 .doOnNext(forecast -> SwingUtilities.invokeLater(() -> {
-//                     // Simple weather‑aware status logic
+    private void updateWeatherForTask(String taskId) {
+        Mono<WeatherForecast> forecastMono = taskManager.fetchWeather("Jeddah");  // fixed city
 
-//                     List<ScheduleRecommendation> recommendations = schedulePlanner
-//                             .suggestSchedule(taskManager.getTasks(), forecast).block();
-
-//                     String status = "No Recommendation";
-//                     for (ScheduleRecommendation r : recommendations) {
-//                         if (r.task().getId().equals(taskId)) {
-//                             status = r.recommendation();
-//                             break;
-//                         }
+        forecastMono
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnNext(forecast -> SwingUtilities.invokeLater(() -> {
+                    // Simple weather‑aware status logic
                     
+                
+                    String status = forecast.getPrecipitationProbability() > 0.6
+                            ? "RISKY (rain)"
+                            : "SAFE";
 
-//                     // Default status
-//                     // String status = forecast.getPrecipitationProbability() > 0.6
-//                     // ? "RISKY (rain)"
-//                     // : "SAFE";
+                    updateTaskStatusInTable(taskId, status);
+                    statusLabel.setText("Weather updated for task: " + taskId);
+                }))
+                .doOnError(error -> SwingUtilities.invokeLater(() -> {
+                    statusLabel.setText("Weather fetch failed: " + error.getMessage());
+                }))
+                .subscribe();
+    }
 
-//                     updateTaskStatusInTable(taskId, status);
-//                     statusLabel.setText("Weather updated for task: " + taskId);
-//                     }
-//                 }))
-//                 .doOnError(error -> SwingUtilities.invokeLater(() -> {
-//                     statusLabel.setText("Weather fetch failed: " + error.getMessage());
-//                 }))
-//                 .subscribe();
-//     }
 
-//     private void updateTaskStatusInTable(String taskId, String status) {
-//         int rowCount = tableModel.getRowCount();
-//         for (int i = 0; i < rowCount; i++) {
-//             String idInTable = (String) tableModel.getValueAt(i, 0);
-//             if (idInTable.equals(taskId)) {
-//                 tableModel.setValueAt(status, i, 4);
-//                 break;
-//             }
-//         }
-//     }
 
-// }
+
+    private void updateTaskStatusInTable(String taskId, String status) {
+        int rowCount = tableModel.getRowCount();
+        for (int i = 0; i < rowCount; i++) {
+            String idInTable = (String) tableModel.getValueAt(i, 0);
+            if (idInTable.equals(taskId)) {
+                tableModel.setValueAt(status, i, 4);
+                break;
+            }
+        }
+    }
+    
+}
+
