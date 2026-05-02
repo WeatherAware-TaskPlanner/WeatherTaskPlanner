@@ -30,5 +30,6 @@ public interface TaskManager {
         TaskManagerBuilder withWeatherApiKey(String apiKey); // stores the key.
         TaskManagerBuilder withStoragePath(String path);  // optional;stores the file path, if needed
         TaskManager build();//creates the final TaskManager object.
+        TaskManagerBuilder withSchedulePlanner(SchedulePlanner planner);
     }
 }

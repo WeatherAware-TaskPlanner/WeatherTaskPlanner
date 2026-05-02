@@ -17,6 +17,7 @@ import java.io.PipedWriter;
 import java.time.format.DateTimeFormatter;
 
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,15 +26,20 @@ public class DefaultTaskManager implements TaskManager {
 
     List<Task> MyTasks;
     String Key;
+    private final SchedulePlanner planner;
 
-    public DefaultTaskManager(String Key) {
+    public DefaultTaskManager(String Key, SchedulePlanner planner) {
         this.Key = Key;
+        this.planner = planner;
         MyTasks = new ArrayList<>();
+        returnDataFromFile();
     }
 
-    public void SyncFile() {
+    public Mono<Void> SyncFile() {
+        return Mono.fromRunnable(() ->{
+
         try {
-            FileWriter f = new FileWriter("Tasks.txt", true);
+            FileWriter f = new FileWriter("Tasks.txt", false);
             PrintWriter p = new PrintWriter(f);
             for (Task t : MyTasks) {
                 p.println(t.getId() + "," + t.getTitle() + "," + t.getDescription()
@@ -44,6 +50,8 @@ public class DefaultTaskManager implements TaskManager {
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
         }
+
+        }).then().subscribeOn(Schedulers.boundedElastic());
     }
 
     public Mono<List<Task>> returnDataFromFile() {
@@ -76,7 +84,7 @@ public class DefaultTaskManager implements TaskManager {
     @Override
     public void addTask(Task task) {
         MyTasks.add(task);
-        SyncFile();
+        SyncFile().subscribe();
 
     }
 
@@ -87,7 +95,15 @@ public class DefaultTaskManager implements TaskManager {
 
     @Override
     public void removeTask(String taskId) {
-        // --------------------------------------
+       
+        for(Task t:MyTasks){
+            if(t.getId().equals(taskId)){
+                MyTasks.remove(t);
+                break;
+            }
+        }
+
+        SyncFile().subscribe();
     }
 
     private final WebClient webClient = WebClient.create();
@@ -111,20 +127,35 @@ public class DefaultTaskManager implements TaskManager {
 
         return webClient
                 .get().uri(URL).retrieve().bodyToMono(WeatherResponse.class)
-                .map(response -> {
-                    forecastInfo info = response.list().get(0);
-                    double temp = info.main().temp();
-                    String condition = info.weather().get(0).description();
-                    String time = info.dt_txt();
+                .map(response ->{
+                    WeatherForecast f=new WeatherForecast(location);
                     DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                    LocalDateTime fTime = LocalDateTime.parse(time, format);
-                    return new WeatherForecast(location, fTime, temp, condition, info.pop());
-                });
+
+                    for(forecastInfo n:response.list()){
+                       String time = n.dt_txt(); 
+                       LocalDateTime fTime = LocalDateTime.parse(time, format);
+
+                       f.addF(fTime, n.main().temp(), n.weather().get(0).description());
+                    }
+                
+                    return f;
+                   } 
+                //     response -> {
+                //     forecastInfo info = response.list().get(0);
+                //     double temp = info.main().temp();
+                //     String condition = info.weather().get(0).description();
+                //     String time = info.dt_txt();
+                //     DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                //     LocalDateTime fTime = LocalDateTime.parse(time, format);
+                //     return new WeatherForecast(location, fTime, temp, condition, info.pop());
+                // }
+            
+            );
     }
 
     @Override
     public SchedulePlanner getPlanner() {
-        return new DefaultSchedulePlaner();
+        return planner;
     }
 
 }

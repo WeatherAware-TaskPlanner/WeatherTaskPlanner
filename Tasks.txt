@@ -1,14 +1,2 @@
-id: task-001, title: Morning runDescription :nullDue Date: 2026-04-29T09:21:11.327845800Weather Sensitive: true
-id: task-002, title: Coding sessionDescription :nullDue Date: 2026-04-29T11:21:11.327845800Weather Sensitive: false
-id: task-001, title: Morning runDescription :nullDue Date: 2026-04-29T09:34:50.992194400Weather Sensitive: true
-id: task-001, title: Morning runDescription :nullDue Date: 2026-04-29T09:34:50.992194400Weather Sensitive: true
-id: task-002, title: Coding sessionDescription :nullDue Date: 2026-04-29T11:34:50.992194400Weather Sensitive: false
-task-001,Morning run,null,2026-04-30T04:30:39.501412600,true
-task-001,Morning run,null,2026-04-30T04:30:39.501412600,true
-task-002,Coding session,null,2026-04-30T06:30:39.501412600,false
-task-001,Morning run,null,2026-04-30T04:34:32.691135,true
-task-001,Morning run,null,2026-04-30T04:34:32.691135,true
-task-002,Coding session,null,2026-04-30T06:34:32.691135,false
-task-001,Morning run,null,2026-05-01T06:10:45.747226600,true
-task-001,Morning run,null,2026-05-01T06:10:45.747226600,true
-task-002,Coding session,null,2026-05-01T08:10:45.747226600,false
+task-001,Morning run,null,2026-05-02T13:58:31.277504200,true
+task-002,Coding session,null,2026-05-02T15:58:31.277504200,false
