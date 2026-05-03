@@ -5,11 +5,13 @@ taskmanager\api\MainApp.class
 taskmanager\api\WeatherForecast.class
 taskmanager\api\TaskManager.class
 taskmanager\api\DefaultSchedulePlaner.class
+taskmanager\api\SmartTaskManagerFrame.class
 taskmanager\api\ScheduleRecommendation.class
 taskmanager\api\weatherRecord.class
 taskmanager\api\WeatherAPIException.class
 taskmanager\api\SchedulePlanner.class
 taskmanager\api\DefaultTaskManager.class
+taskmanager\api\DefaultTaskService.class
 taskmanager\api\InvalidTaskException.class
 taskmanager\api\Task.class
 taskmanager\api\DefaultTaskManager$Weather.class

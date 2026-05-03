@@ -8,18 +8,17 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 public class DefaultTaskService implements TaskService {
 
-    List<Task> MyTasks=new ArrayList<>();
+    List<Task> MyTasks = new ArrayList<>();
 
-        public DefaultTaskService() {
-            returnDataFromFile().block();
-        }
+    public DefaultTaskService() {
+        returnDataFromFile().block();
+    }
 
     public Mono<Void> SyncFile() {
         return Mono.fromRunnable(() -> {
@@ -70,7 +69,7 @@ public class DefaultTaskService implements TaskService {
     @Override
     public Mono<Void> addTask(Task task) {
 
-        return Mono.fromRunnable(()->{
+        return Mono.fromRunnable(() -> {
             MyTasks.add(task);
             SyncFile().subscribe();
         }).then().subscribeOn(Schedulers.boundedElastic());
@@ -79,11 +78,11 @@ public class DefaultTaskService implements TaskService {
     @Override
     public Mono<Void> removeTask(String taskId) {
 
-        return Mono.fromRunnable(()->{
-            for(Task t:MyTasks){
-                if(t.getId().equals(taskId)){
+        return Mono.fromRunnable(() -> {
+            for (Task t : MyTasks) {
+                if (t.getId().equals(taskId)) {
                     MyTasks.remove(t);
-                    
+
                     break;
                 }
             }
@@ -94,9 +93,9 @@ public class DefaultTaskService implements TaskService {
     @Override
     public Mono<Task> findTaskById(String taskId) {
 
-        return Mono.fromCallable(()->{
-            for(Task t:MyTasks){
-                if(t.getId().equals(taskId)){
+        return Mono.fromCallable(() -> {
+            for (Task t : MyTasks) {
+                if (t.getId().equals(taskId)) {
                     return t;
                 }
             }
@@ -108,13 +107,14 @@ public class DefaultTaskService implements TaskService {
     public Flux<Task> findAllTasks() {
 
         return Flux.fromIterable(MyTasks)
-            .subscribeOn(Schedulers.boundedElastic());
+        //  لمى
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
-    // S
+    
     @Override
     public Mono<List<Task>> findAllTasksAsList() {
-        return Mono.empty();
+        return Mono.just(MyTasks);
     }
 
 }

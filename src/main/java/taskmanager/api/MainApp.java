@@ -32,8 +32,8 @@ public class MainApp {
                 System.out.println("Tasks loaded: " + tm.getTasks().size());
 
                 // Wire this to the Swing UI
-                // SmartTaskManagerFrame frame = new SmartTaskManagerFrame(tm);
-                // javax.swing.SwingUtilities.invokeLater(() -> frame.setVisible(true));
+                SmartTaskManagerFrame frame = new SmartTaskManagerFrame(tm);
+                javax.swing.SwingUtilities.invokeLater(() -> frame.setVisible(true));
 
                 System.out.println("Tasks ----------> " + tm.getTasks());
 
