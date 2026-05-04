@@ -28,7 +28,8 @@ public class DefaultTaskManagerBuilder implements TaskManager.TaskManagerBuilder
 
     @Override
     public TaskManager build() {
-        return new DefaultTaskManager(Key, new DefaultSchedulePlaner());
+        // return new DefaultTaskManager(Key, new DefaultSchedulePlaner());
+        return new DefaultTaskManager(Key, planner);
         // DefaultTaskManager Manager = new DefaultTaskManager(Key,planner);
         // return Manager;
     }

@@ -14,7 +14,7 @@ import reactor.core.scheduler.Schedulers;
 
 public class DefaultTaskService implements TaskService {
 
-    List<Task> MyTasks = new ArrayList<>();
+    List<Task> MyTasks = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     public DefaultTaskService() {
         returnDataFromFile().block();
@@ -107,11 +107,10 @@ public class DefaultTaskService implements TaskService {
     public Flux<Task> findAllTasks() {
 
         return Flux.fromIterable(MyTasks)
-        //  لمى
+                // لمى
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    
     @Override
     public Mono<List<Task>> findAllTasksAsList() {
         return Mono.just(MyTasks);

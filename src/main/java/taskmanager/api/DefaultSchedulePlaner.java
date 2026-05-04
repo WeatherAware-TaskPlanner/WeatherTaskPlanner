@@ -100,7 +100,7 @@ public class DefaultSchedulePlaner implements SchedulePlanner {
     public Mono<List<ScheduleRecommendation>> suggestScheduleForLocation(List<Task> tasks, String location) {
 
         return w.fetchWeather(location)
-                .flatMap(f -> suggestSchedule(tasks, f));
+                .flatMap(forecast -> suggestSchedule(tasks, forecast));
     }
 
 }
