@@ -12,6 +12,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import taskmanager.api.TaskService;
+import taskmanager.expception.InvalidTaskException;
 import taskmanager.expception.TaskNotFoundException;
 import taskmanager.model.Task;
 
@@ -72,39 +73,36 @@ public class DefaultTaskService implements TaskService {
 
     @Override
     public Mono<Void> addTask(Task task) {
-
-        return Mono.fromRunnable(() -> {
-            MyTasks.add(task);
-            SyncFile().subscribe();
-        }).then().subscribeOn(Schedulers.boundedElastic());
+         if(task == null || task.getId().isBlank() || task.getTitle().isBlank() || task.getDueDateTime() == null) {
+                return Mono.error(new InvalidTaskException("Task and its required fields must not be null"));
+            }
+        return Mono.fromRunnable(() -> MyTasks.add(task))
+                .then(SyncFile())
+                .subscribeOn(Schedulers.boundedElastic());
+           
+        
     }
 
     @Override
     public Mono<Void> removeTask(String taskId) {
 
-        return Mono.fromRunnable(() -> {
-            for (Task t : MyTasks) {
-                if (t.getId().equals(taskId)) {
-                    MyTasks.remove(t);
-
-                    break;
-                }
-            }
-            SyncFile().subscribe();
-        }).then().subscribeOn(Schedulers.boundedElastic());
+        return Flux.fromIterable(MyTasks)
+            .filter(t ->t.getId().equals(taskId))
+            .next()
+            .switchIfEmpty(Mono.error(new TaskNotFoundException("Task not found")))
+            .doOnNext(t -> MyTasks.remove(t))
+            .then(SyncFile())
+            .subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
     public Mono<Task> findTaskById(String taskId) {
 
-        return Mono.fromCallable(() -> {
-            for (Task t : MyTasks) {
-                if (t.getId().equals(taskId)) {
-                    return t;
-                }
-            }
-            throw new TaskNotFoundException("Id Wrong");
-        }).subscribeOn(Schedulers.boundedElastic());
+        return Flux.fromIterable(MyTasks)
+            .filter(t -> t.getId().equals(taskId))
+            .next()
+            .switchIfEmpty(Mono.error(new TaskNotFoundException("Task not found")))
+            .subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
