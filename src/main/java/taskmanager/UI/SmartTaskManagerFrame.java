@@ -23,7 +23,7 @@ import java.util.List;
 public class SmartTaskManagerFrame extends JFrame {
 
     private final TaskManager taskManager;
-    private final TaskService taskService; // to be initialized from taskManager.impl
+    // to be initialized from taskManager.impl
     private final SchedulePlanner schedulePlanner;
 
     private final JTable taskTable;
@@ -41,8 +41,6 @@ public class SmartTaskManagerFrame extends JFrame {
     public SmartTaskManagerFrame(TaskManager taskManager) {
         this.taskManager = taskManager;
         this.schedulePlanner = taskManager.getPlanner();
-
-        this.taskService = ((DefaultTaskManager) taskManager).taskService;
 
         setTitle("Smart Task Manager (Swing)");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -101,7 +99,7 @@ public class SmartTaskManagerFrame extends JFrame {
             String taskId = (String) tableModel.getValueAt(selectedRow, 0);
             updateWeatherForTask(taskId);
         });
-        // ----------------------------------------------------------------------------------------
+
         // add task from user
         addButton.addActionListener(e -> {
             JTextField idField = new JTextField();
@@ -134,13 +132,11 @@ public class SmartTaskManagerFrame extends JFrame {
 
                     Task newTask = new Task(idField.getText(), titleField.getText(),
                             LocalDateTime.parse(dateField.getText()), weatherBox.isSelected());
-                    taskService.addTask(newTask)
-                            .doOnSuccess(v -> SwingUtilities.invokeLater(() -> {
-                                loadTasks();
-                                statusLabel.setText("Task Added Successfully!");
+                    taskManager.addTask(newTask);
 
-                            }))
-                            .subscribe();
+                    loadTasks();
+                    statusLabel.setText("Task Added Successfully!");
+
                 } catch (InvalidTaskException ex) {
                     JOptionPane.showMessageDialog(this, ex.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
                 } catch (Exception exception) {
@@ -272,10 +268,10 @@ public class SmartTaskManagerFrame extends JFrame {
     }
 
     private void loadWeatherStatus(List<Task> tasks) {
-    tasks.stream()
-         .filter(t -> t.isWeatherSensitive())
-         .forEach(t -> updateWeatherForTask(t.getId()));
-}
+        tasks.stream()
+                .filter(t -> t.isWeatherSensitive())
+                .forEach(t -> updateWeatherForTask(t.getId()));
+    }
 
     private void populateTable(List<Task> tasks) {
         tableModel.setRowCount(0);

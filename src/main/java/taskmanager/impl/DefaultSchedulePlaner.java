@@ -9,14 +9,19 @@ import java.util.List;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import taskmanager.api.SchedulePlanner;
+import taskmanager.api.TaskManager;
 import taskmanager.model.ScheduleRecommendation;
 import taskmanager.model.Task;
 import taskmanager.model.WeatherForecast;
 import taskmanager.model.weatherRecord;
 
 public class DefaultSchedulePlaner implements SchedulePlanner {
-   
-    DefaultTaskManager w;
+//Reference to the main TaskManager used for API calls. 
+    private TaskManager taskManager;
+//Links the TaskManager to this planner
+    public void setTaskManager(TaskManager taskManager) {
+        this.taskManager = taskManager;
+    }
 
     /**
      * Purpose: Analyzes a list of tasks against a given weather forecast to
@@ -104,7 +109,7 @@ public class DefaultSchedulePlaner implements SchedulePlanner {
     @Override
     public Mono<List<ScheduleRecommendation>> suggestScheduleForLocation(List<Task> tasks, String location) {
 
-        return w.fetchWeather(location)
+        return taskManager.fetchWeather(location)
                 .flatMap(forecast -> suggestSchedule(tasks, forecast));
     }
 

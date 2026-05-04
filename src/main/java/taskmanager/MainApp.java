@@ -13,11 +13,13 @@ public class MainApp {
 
         public static void main(String[] args) {
                 // Build the TaskManager (students will implement DefaultTaskManager)
+               DefaultSchedulePlaner planner = new DefaultSchedulePlaner();
                 TaskManager tm = TaskManager.builder()
                                 .withWeatherApiKey("169fb16b23c8963bb5d881cd53c1b855")
-                                .withSchedulePlanner(new DefaultSchedulePlaner())
+                                .withSchedulePlanner(planner)
                                 .withStoragePath("Tasks.txt")
                                 .build();
+                                planner.setTaskManager(tm);
 
                 // Add a couple of test tasks
                 Task task1 = new Task(
