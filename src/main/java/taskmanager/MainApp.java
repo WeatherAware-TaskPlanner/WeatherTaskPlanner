@@ -1,8 +1,13 @@
-package taskmanager.api;
+package taskmanager;
 
 import java.time.LocalDateTime;
-import taskmanager.api.WeatherForecast;
-import taskmanager.api.weatherRecord;
+
+import taskmanager.UI.SmartTaskManagerFrame;
+import taskmanager.api.TaskManager;
+import taskmanager.impl.DefaultSchedulePlaner;
+import taskmanager.model.Task;
+import taskmanager.model.WeatherForecast;
+import taskmanager.model.weatherRecord;
 
 public class MainApp {
 
@@ -25,9 +30,21 @@ public class MainApp {
                                 "Coding session",
                                 LocalDateTime.now().plusHours(4),
                                 false);
+                Task task3 = new Task(
+                                "task-003",
+                                "Strolling in the park",
+                                LocalDateTime.now().plusHours(6),
+                                true);
+                Task task4 = new Task(
+                                "task-004",
+                                "Meeting with friends",
+                                LocalDateTime.now().plusHours(1),
+                                true);
 
                 tm.addTask(task1);
                 tm.addTask(task2);
+                tm.addTask(task3);
+                tm.addTask(task4);
 
                 System.out.println("Tasks loaded: " + tm.getTasks().size());
 
@@ -37,20 +54,22 @@ public class MainApp {
 
                 System.out.println("Tasks ----------> " + tm.getTasks());
 
-                for (Task t : tm.getTasks()) {
-                        System.out.println("id: " + t.getId() + ", title: " + t.getTitle() + "Description :"
-                                        + t.getDescription());
-                }
+                // for (Task t : tm.getTasks()) {
+                // System.out.println("id: " + t.getId() + ", title: " + t.getTitle() +
+                // "Description :"
+                // + t.getDescription());
+                // }
 
-                tm.fetchWeather("Reykjavik")
-                                .flatMap(forecast -> tm.getPlanner().suggestSchedule(tm.getTasks(), forecast))
-                                .subscribe(recommendations -> {
-                                        for (ScheduleRecommendation rec : recommendations) {
-                                                System.out.println(
-                                                                "task: " + rec.task().getTitle() +
-                                                                                " | Recommendation: " + rec.recommendation());
-                                        }
-                                });
+                // tm.fetchWeather("Reykjavik")
+                // .flatMap(forecast -> tm.getPlanner().suggestSchedule(tm.getTasks(),
+                // forecast))
+                // .subscribe(recommendations -> {
+                // for (ScheduleRecommendation rec : recommendations) {
+                // System.out.println(
+                // "task: " + rec.task().getTitle() +
+                // " | Recommendation: " + rec.recommendation());
+                // }
+                // });
 
                 // SmartTaskManagerFrame frame = new SmartTaskManagerFrame(tm);
                 // frame.setVisible(true);

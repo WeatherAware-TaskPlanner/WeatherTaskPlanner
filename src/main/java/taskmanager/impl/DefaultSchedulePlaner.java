@@ -1,4 +1,4 @@
-package taskmanager.api;
+package taskmanager.impl;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -8,6 +8,11 @@ import java.util.List;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import taskmanager.api.SchedulePlanner;
+import taskmanager.model.ScheduleRecommendation;
+import taskmanager.model.Task;
+import taskmanager.model.WeatherForecast;
+import taskmanager.model.weatherRecord;
 
 public class DefaultSchedulePlaner implements SchedulePlanner {
    

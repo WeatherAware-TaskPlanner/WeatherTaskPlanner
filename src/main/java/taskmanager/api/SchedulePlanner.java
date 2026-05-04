@@ -2,6 +2,9 @@ package taskmanager.api;
 
 
 import reactor.core.publisher.Mono;
+import taskmanager.model.ScheduleRecommendation;
+import taskmanager.model.Task;
+import taskmanager.model.WeatherForecast;
 
 import java.util.List;
 

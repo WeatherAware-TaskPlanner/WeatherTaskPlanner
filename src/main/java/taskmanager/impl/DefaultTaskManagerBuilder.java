@@ -1,5 +1,7 @@
-package taskmanager.api;
+package taskmanager.impl;
 
+import taskmanager.api.SchedulePlanner;
+import taskmanager.api.TaskManager;
 import taskmanager.api.TaskManager.TaskManagerBuilder;
 
 public class DefaultTaskManagerBuilder implements TaskManager.TaskManagerBuilder {

@@ -1,4 +1,4 @@
-package taskmanager.api;
+package taskmanager.impl;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,6 +11,10 @@ import java.util.List;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import taskmanager.api.TaskService;
+import taskmanager.expception.TaskNotFoundException;
+import taskmanager.model.Task;
+
 
 public class DefaultTaskService implements TaskService {
 
@@ -106,9 +110,8 @@ public class DefaultTaskService implements TaskService {
     @Override
     public Flux<Task> findAllTasks() {
 
-        return Flux.fromIterable(MyTasks)
-                // لمى
-                .subscribeOn(Schedulers.boundedElastic());
+        return Flux.fromIterable(MyTasks);
+                
     }
 
     @Override
