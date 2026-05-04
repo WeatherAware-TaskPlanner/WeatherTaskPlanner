@@ -1,6 +1,10 @@
 package taskmanager.api;
 
 import reactor.core.publisher.Mono;
+import taskmanager.impl.DefaultTaskManagerBuilder;
+import taskmanager.model.Task;
+import taskmanager.model.WeatherForecast;
+
 import java.util.List;
 
 /**
@@ -8,12 +12,12 @@ import java.util.List;
  * Other developers will use this to interact with the system.
  */
 public interface TaskManager {
+    
+    void addTask(Task task);/** Register a new task */
 
-    void addTask(Task task);
+    void removeTask(String taskId);/* Remove an existing task */
 
-    void removeTask(String taskId);
-
-    List<Task> getTasks();
+    List<Task> getTasks();/** Retrieve all tasks */
 
     // Fetches weather data asynchronously without blocking
     Mono<WeatherForecast> fetchWeather(String location); 
