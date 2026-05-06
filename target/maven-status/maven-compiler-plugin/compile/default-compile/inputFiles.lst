@@ -1,0 +1,16 @@
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\api\SchedulePlanner.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\api\TaskManager.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\api\TaskService.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\expception\InvalidTaskException.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\expception\TaskNotFoundException.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\expception\WeatherAPIException.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\impl\DefaultSchedulePlaner.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\impl\DefaultTaskManager.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\impl\DefaultTaskManagerBuilder.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\impl\DefaultTaskService.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\MainApp.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\model\ScheduleRecommendation.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\model\Task.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\model\WeatherForecast.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\model\weatherRecord.java
+C:\Users\LENOVO\Downloads\WeatherTaskPlanner\code\src\main\java\taskmanager\UI\SmartTaskManagerFrame.java
