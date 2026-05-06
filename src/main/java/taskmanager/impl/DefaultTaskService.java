@@ -122,7 +122,6 @@ public class DefaultTaskService implements TaskService {
 
         return Flux.fromIterable(MyTasks)
                 .filter(t -> t.getId().equals(taskId))
-                .next()
                 .switchIfEmpty(Mono.error(new TaskNotFoundException("Task not found")))
                 .doOnNext(t -> MyTasks.remove(t))
                 .then(SyncFile())

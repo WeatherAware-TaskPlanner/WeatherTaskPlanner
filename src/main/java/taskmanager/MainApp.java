@@ -22,31 +22,31 @@ public class MainApp {
                                 planner.setTaskManager(tm);
 
                 // Add a couple of test tasks
-                Task task1 = new Task(
-                                "task-001",
-                                "Morning run",
-                                LocalDateTime.now().plusHours(2),
-                                true);
-                Task task2 = new Task(
-                                "task-002",
-                                "Coding session",
-                                LocalDateTime.now().plusHours(4),
-                                false);
-                Task task3 = new Task(
-                                "task-003",
-                                "Strolling in the park",
-                                LocalDateTime.now().plusHours(6),
-                                true);
-                Task task4 = new Task(
-                                "task-004",
-                                "Meeting with friends",
-                                LocalDateTime.now().plusHours(1),
-                                true);
+                // Task task1 = new Task(
+                //                 "task-001",
+                //                 "Morning run",
+                //                 LocalDateTime.now().plusHours(2),
+                //                 true);
+                // Task task2 = new Task(
+                //                 "task-002",
+                //                 "Coding session",
+                //                 LocalDateTime.now().plusHours(4),
+                //                 false);
+                // Task task3 = new Task(
+                //                 "task-003",
+                //                 "Strolling in the park",
+                //                 LocalDateTime.now().plusHours(6),
+                //                 true);
+                // Task task4 = new Task(
+                //                 "task-004",
+                //                 "Meeting with friends",
+                //                 LocalDateTime.now().plusHours(1),
+                //                 true);
 
-                tm.addTask(task1);
-                tm.addTask(task2);
-                tm.addTask(task3);
-                tm.addTask(task4);
+                // tm.addTask(task1);
+                // tm.addTask(task2);
+                // tm.addTask(task3);
+                // tm.addTask(task4);
 
                 System.out.println("Tasks loaded: " + tm.getTasks().size());
 
@@ -55,7 +55,15 @@ public class MainApp {
                 javax.swing.SwingUtilities.invokeLater(() -> frame.setVisible(true));
 
                 System.out.println("Tasks ----------> " + tm.getTasks());
+                        WeatherForecast forecast = tm.fetchWeather("Reykjavik").block();
+                        forecast.getdList().forEach(w -> System.out.println(
+                                "Time: " + w.getTime() +
+                                " | Temp: " + w.getTemp() +
+                                " | Condition: " + w.getCondition() +
+                                " | Precipitation Probability: " + w.getPop()));
 
+
+                                tm.getPlanner().suggestSchedule(tm.getTasks(), forecast);
                 // for (Task t : tm.getTasks()) {
                 // System.out.println("id: " + t.getId() + ", title: " + t.getTitle() +
                 // "Description :"

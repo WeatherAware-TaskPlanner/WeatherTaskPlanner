@@ -50,7 +50,7 @@ public class DefaultTaskManager implements TaskManager {
     @Override
     public void addTask(Task task) {
 
-        taskService.addTask(task).block();
+        taskService.addTask(task).subscribe();
 
     }
 
@@ -73,7 +73,7 @@ public class DefaultTaskManager implements TaskManager {
     @Override
     public void removeTask(String taskId) {
 
-        taskService.removeTask(taskId).block();
+        taskService.removeTask(taskId).subscribe();
 
     }
 
